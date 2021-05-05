@@ -1,0 +1,22 @@
+{
+  "name": "mermaidjs-experiment",
+  "version": "1.0.0",
+  "description": "mermaidjs experiment to draw diagrams",
+  "license": "MIT",
+  "author": "CrgioPeca88",
+  "keywords": [
+    "typescript",
+    "javascript"
+  ],
+  "scripts": {
+    "start": "parcel src/index.html"
+  },
+  "devDependencies": {
+    "@types/mermaid": "^8.2.5",
+    "parcel-bundler": "^1.12.5",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "mermaid": "^8.9.3"
+  }
+}

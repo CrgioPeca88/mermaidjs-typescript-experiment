@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+}
+
+body h1 {
+    margin: 0;
+}
+
+.main-title {
+    background-color: yellow;
+    color: black;
+}
