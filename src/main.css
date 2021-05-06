@@ -10,3 +10,27 @@ body h1 {
     background-color: yellow;
     color: black;
 }
+
+.diagram-container {
+    border: 1px solid green;
+    margin: 0 auto;
+    display: flex;
+    gap: 20px;
+    width: 90vw;
+    height: 90vh;
+}
+
+.pallete {
+    border: 1px solid blue;
+    width: 10%;
+    height: inherit;
+}
+
+.mermaid {
+    border: 1px solid red;
+    color: white;
+    width: 85%;
+    height: inherit;
+    overflow-y: auto;
+    overflow-x: auto;
+}

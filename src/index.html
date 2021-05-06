@@ -9,16 +9,10 @@
 </head>
 <body>
     <h1 class="main-title">MermaidJs Experiment</h1>
-    <div class="mermaid">
-        graph TB
-            A((Nodo A))-->B((Nodo B))
-            B-->C((Nodo C))
-            C-->D((Nodo D))
-            D-->E((Nodo E))
-            E-->F((Nodo F))
-            F-->G((Nodo G))
-            G-->H((Nodo H))
-    </div>  
+    <section class="diagram-container">
+        <div class="pallete"></div>
+        <div class="mermaid" id="mermaid-diagram"></div>
+    </section>
     <script type="module" src="./main.ts"></script>
 </body>
 </html>
