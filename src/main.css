@@ -7,8 +7,8 @@ body h1 {
 }
 
 .main-title {
-    background-color: yellow;
-    color: black;
+    background-color: orange;
+    color: whitesmoke;
 }
 
 .diagram-container {
@@ -28,7 +28,7 @@ body h1 {
 
 .mermaid {
     border: 1px solid red;
-    color: white;
+    /*color: white;*/
     width: 85%;
     height: inherit;
     overflow-y: auto;
