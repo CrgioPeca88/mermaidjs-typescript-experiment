@@ -13,8 +13,12 @@
     <h1 class="main-title">MermaidJs Experiment</h1>
     <section class="diagram-container">
         <div class="pallete">
-            <button id="addNode" class="pallete-add-node">Agregar Nodo</button>
-            <button id="clear" class="pallete-clear">Limpiar</button>
+            <div class="tree-actions">
+                <button id="addNode" class="pallete-add-node">Agregar Nodo</button>
+                <button id="updateParent" class="pallete-update-parent">Cambiar Padre</button>
+                <button id="clear" class="pallete-clear">Limpiar</button>
+            </div>
+            <button id="treeValidate" class="pallete-tree-validate">Validar Arbol</button>
         </div>
         <div class="mermaid" id="mermaid-diagram"></div>
     </section>
