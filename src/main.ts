@@ -16,6 +16,7 @@ interface Node {
 let mermaidDiagram: HTMLElement;
 let clear: HTMLElement;
 let addNode: HTMLElement;
+let treeValidate: HTMLElement;
 let count: number;
 let startDiagram: string;
 let tree: string;
@@ -24,14 +25,15 @@ let tree: string;
     count = 1;
     startDiagram = `
         graph TB
-            subgraph vertical[Padres]
+            subgraph vertical[Padres - Initials]
                 1((Nodo 1))
-            end
+            end vertical
     `;
     tree = startDiagram;
     mermaidDiagram = document.getElementById('mermaid-diagram');
     addNode = document.getElementById('addNode');
     clear = document.getElementById('clear');
+    treeValidate = document.getElementById('treeValidate');
     mermaidDiagram.innerHTML = tree;
     mermaid.initialize({
         startOnLoad: true,
@@ -43,6 +45,10 @@ let tree: string;
         }
     });
 })()
+
+function callback(): void {
+    alert("Hola!!");
+}
 
 function increaseCounter(n: number): void {
     count = count + n;
@@ -65,15 +71,15 @@ function clearTree(): void {
 }
 
 function AddNodeToTree(newNode: String): void {
-    if (getCounter() > 1) {
+    if (getCounter() > 2) {
+        tree = tree.replace(`end childs`, `${newNode}\n end childs`);
+    } else {
         tree =`
             ${tree}\n
-            subgraph childs[Hijos]
+            subgraph childs[Hijos - Transactionals]
             ${newNode}
-            end
+            end childs
         `;
-    } else {
-        tree.replace(`end`, `${newNode}\n end`);
     }
 }
 
@@ -96,4 +102,8 @@ clear.onclick = () => {
     clearTree();
     clearCounter(1);
     renderDiagram(getTree());
+}
+
+treeValidate.onclick = () => {
+    console.log(getTree());
 }

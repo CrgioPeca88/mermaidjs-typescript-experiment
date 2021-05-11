@@ -23,6 +23,7 @@ body h1 {
 
 .pallete {
     border: 1px solid #ff441f;
+    border-radius: 3px;
     width: 10%;
     height: inherit;
     display: flex;
@@ -40,7 +41,14 @@ body h1 {
 }
 
 .pallete .pallete-add-node {
-    margin-top: 10px;
+    width: 70px;
+    height: 70px;
+    background-color: #ff441f;
+    border: none;
+    color: whitesmoke;
+    padding: 10px;
+    border-radius: 50px;
+    cursor: pointer;
 }
 
 .pallete .pallete-update-parent {
@@ -52,6 +60,7 @@ body h1 {
     padding: 10px;
     border-radius: 50px;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 .pallete .pallete-clear {
@@ -78,6 +87,7 @@ body h1 {
 }
 
 .mermaid {
+    border-radius: 3px;
     text-align: center;
     border: 1px solid #ff441f;
     color: white;
