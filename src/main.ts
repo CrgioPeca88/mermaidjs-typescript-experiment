@@ -17,6 +17,7 @@ let mermaidDiagram: HTMLElement;
 let clear: HTMLElement;
 let addNode: HTMLElement;
 let treeValidate: HTMLElement;
+let updateParent: HTMLElement;
 let count: number;
 let startDiagram: string;
 let tree: string;
@@ -34,6 +35,7 @@ let tree: string;
     addNode = document.getElementById('addNode');
     clear = document.getElementById('clear');
     treeValidate = document.getElementById('treeValidate');
+    updateParent = document.getElementById('updateParent');
     mermaidDiagram.innerHTML = tree;
     mermaid.initialize({
         startOnLoad: true,
@@ -106,4 +108,10 @@ clear.onclick = () => {
 
 treeValidate.onclick = () => {
     console.log(getTree());
+}
+
+updateParent.onclick = () => {
+    clearTree();
+    clearCounter(1);
+    renderDiagram(getTree());
 }
