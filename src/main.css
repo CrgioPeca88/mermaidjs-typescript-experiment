@@ -7,13 +7,14 @@ body h1 {
 }
 
 .main-title {
-    background-color: orange;
+    background-color: #ff441f;
     color: whitesmoke;
+    font-family: 'Lobster', cursive;
+    padding: 10px 15px;
 }
 
 .diagram-container {
-    border: 1px solid green;
-    margin: 0 auto;
+    margin: 15px auto;
     display: flex;
     gap: 20px;
     width: 90vw;
@@ -21,13 +22,32 @@ body h1 {
 }
 
 .pallete {
-    border: 1px solid blue;
+    border: 1px solid #ff441f;
     width: 10%;
     height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+}
+
+.pallete .pallete-add-node {
+    margin-top: 10px;
+}
+
+.pallete .pallete-clear {
+    background-color: transparent;
+    border: 1px solid #6816fc;
+    color: #6816fc;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .mermaid {
-    border: 1px solid red;
+    text-align: center;
+    border: 1px solid #ff441f;
     /*color: white;*/
     width: 85%;
     height: inherit;

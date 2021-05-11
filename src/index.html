@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MermaidJs Exp</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./main.css">
 </head>
 <body>
     <h1 class="main-title">MermaidJs Experiment</h1>
     <section class="diagram-container">
         <div class="pallete">
-            <button id="start">Iniciar</button>
-            <button id="graph2">Grafo2</button>
-            <button id="addNode">Agregar Nodo</button>
+            <button id="addNode" class="pallete-add-node">Agregar Nodo</button>
+            <button id="clear" class="pallete-clear">Limpiar</button>
         </div>
         <div class="mermaid" id="mermaid-diagram"></div>
     </section>
