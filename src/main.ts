@@ -18,6 +18,7 @@ let clear: HTMLElement;
 let addNode: HTMLElement;
 let treeValidate: HTMLElement;
 let updateParent: HTMLElement;
+let upload: HTMLElement;
 let count: number;
 let startDiagram: string;
 let tree: string;
@@ -36,6 +37,7 @@ let tree: string;
     clear = document.getElementById('clear');
     treeValidate = document.getElementById('treeValidate');
     updateParent = document.getElementById('updateParent');
+    upload = document.getElementById('upload');
     mermaidDiagram.innerHTML = tree;
     mermaid.initialize({
         startOnLoad: true,
@@ -114,4 +116,28 @@ updateParent.onclick = () => {
     clearTree();
     clearCounter(1);
     renderDiagram(getTree());
+}
+
+upload.onclick = () => {
+    renderDiagram(`
+        graph TB
+            subgraph vertical[Padres - Initials]
+                1((Nodo 1))
+            end vertical
+
+            subgraph childs[Hijos - Transactionals]
+                1-->2((Nodo 2))
+                2-->3((Nodo 3))
+                1-->4((Nodo 4))
+                1-->5((Nodo 5))
+                3-->6((Nodo 6))
+                3-->7((Nodo 7))
+                3-->8((Nodo 8))
+                3-->9((Nodo 9))
+                3-->10((Nodo 10))
+                3-->11((Nodo 11))
+                3-->12((Nodo 12))
+                7-->13((Nodo 13))
+            end childs
+    `);
 }

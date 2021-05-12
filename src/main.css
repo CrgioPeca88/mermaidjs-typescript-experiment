@@ -72,6 +72,15 @@ body h1 {
     cursor: pointer;
 }
 
+.pallete .pallete-upload {
+    background-color: transparent;
+    border: 1px solid #0CC665;
+    color: #0CC665;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 .pallete .pallete-tree-validate {
     background-color: #0CC665;
     border: none;
