@@ -1,6 +1,6 @@
 import mermaid from "mermaid";
 
-/*type NodeType = 'parent' | 'child'
+type NodeType = 'parent' | 'child'
 
 interface NodeChild {
     name: string;
@@ -11,7 +11,7 @@ interface Node {
     name: string;
     type: NodeType;
     roads: NodeChild[]
-}*/
+}
 
 let mermaidDiagram: HTMLElement;
 let clear: HTMLElement;
@@ -120,6 +120,7 @@ updateParent.onclick = () => {
 
 upload.onclick = () => {
     renderDiagram(`
+    %%{ initialize: { "theme": 'forest', "flowchart": { "useMaxWidth": false } } }%%
         graph TB
             subgraph vertical[Padres - Initials]
                 1((Nodo 1))
@@ -138,6 +139,14 @@ upload.onclick = () => {
                 3-->11((Nodo 11))
                 3-->12((Nodo 12))
                 7-->13((Nodo 13))
+                3-->14((Nodo 14))
+                3-->15((Nodo 15))
+                3-->16((Nodo 16))
+                3-->17((Nodo 17))
+                3-->18((Nodo 18))
+                3-->19((Nodo 19))
+                3-->20((Nodo 20))
+                3-->21((Nodo 21))
             end childs
     `);
 }
