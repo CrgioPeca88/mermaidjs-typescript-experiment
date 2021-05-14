@@ -1,8 +1,13 @@
 import mermaid from "mermaid";
+import { Observable, of } from "rxjs";
+import { exhaustMap, map, tap } from "rxjs/operators";
 
-type NodeType = 'parent' | 'child'
+interface GraphConfig {
+    graphDirection: string;
+}
 
 interface NodeChild {
+    id: string;
     name: string;
 }
 
@@ -10,48 +15,92 @@ interface Node {
     id: string
     name: string;
     type: NodeType;
-    roads: NodeChild[]
+    roads?: NodeChild[]
 }
 
-let mermaidDiagram: HTMLElement;
-let clear: HTMLElement;
-let addNode: HTMLElement;
-let treeValidate: HTMLElement;
-let updateParent: HTMLElement;
-let upload: HTMLElement;
-let count: number;
+type NodeType = 'parent' | 'child'
+type NodesByTypes = [Node[], Node[]];
+
+let mermaidDiagram: HTMLElement = document.getElementById('mermaid-diagram');
+let clear: HTMLElement = document.getElementById('clear');
+let addNode: HTMLElement = document.getElementById('addNode');
+let treeValidate: HTMLElement = document.getElementById('treeValidate');
+let updateParent: HTMLElement = document.getElementById('updateParent');
+let upload: HTMLElement = document.getElementById('upload');
+let count: number = 1;
 let startDiagram: string;
 let tree: string;
+let nodesTree: Node[] = [{
+    id: '1',
+    name: 'Nodo1',
+    type: 'parent'
+}, {
+    id: '2',
+    name: 'Nodo2',
+    type: 'parent'
+}];
+const defaultGraphConfig: GraphConfig = {
+    graphDirection: 'TB'
+}
 
-(function () {
-    count = 1;
-    startDiagram = `
-        graph TB
+function getNodesByNodeType(nodesTree: Node[], type: NodeType): Observable<Node[]> {
+    return of(nodesTree.filter((node: Node) => node.type === type));
+}
+
+function getTupleParentsWithChilds(parents: Node[], childs: Observable<Node[]>): Observable<NodesByTypes> {
+    return childs.pipe(
+        map((childs: Node[]) => [parents, childs] as NodesByTypes)
+    );
+}
+
+function getGraphHead(config: GraphConfig): Observable<string> {
+    return of(`graph ${config.graphDirection} \n`);
+}
+
+function getGraphWithParents(graph: string, parents: Node[]): Observable<string> {
+    const loop: (parentGraph: string, actualNode: Node) => string = (parentGraph: string, actualNode: Node): string => {
+        return (actualNode) ? `${parentGraph}${actualNode.id}((${actualNode.name}))\n`: parentGraph;
+    };
+    return of(`${graph}\n${parents.reduce(loop, '')}`);
+}
+
+function getGraphFromTuple(tuple: NodesByTypes, config: GraphConfig = defaultGraphConfig): Observable<string> {
+    return of(null).pipe(
+        exhaustMap(() => getGraphHead(config)),
+        exhaustMap((graph: string) => getGraphWithParents(graph, tuple[0])),
+        tap(x => console.log("%c Vamos => ", "background-color: orange; color: white", x)),
+        exhaustMap(a => of(`
+        graph ${config.graphDirection}
             subgraph vertical[Padres - Initials]
                 1((Nodo 1))
             end vertical
-    `;
-    tree = startDiagram;
-    mermaidDiagram = document.getElementById('mermaid-diagram');
-    addNode = document.getElementById('addNode');
-    clear = document.getElementById('clear');
-    treeValidate = document.getElementById('treeValidate');
-    updateParent = document.getElementById('updateParent');
-    upload = document.getElementById('upload');
-    mermaidDiagram.innerHTML = tree;
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'default',
-        flowchart: {
-            useMaxWidth: true,
-            diagramPadding: 15,
-            nodeSpacing: 20
-        }
-    });
-})()
+        `))
+    )
+}
 
-function callback(): void {
-    alert("Hola!!");
+function getMermaidGraphFromNodesTree(nodesTree: Node[]): Observable<any> {
+    return of(null).pipe(
+        exhaustMap(() =>                getNodesByNodeType(nodesTree, 'parent')),
+        exhaustMap((parents: Node[]) => getTupleParentsWithChilds(parents, getNodesByNodeType(nodesTree, 'child'))),
+        exhaustMap((tuple: NodesByTypes) => getGraphFromTuple(tuple))
+    )
+}
+
+function initStartDiagram(nodesTree: Node[]): void {
+    getMermaidGraphFromNodesTree(nodesTree).subscribe((res: string) => {
+        startDiagram = res;
+        tree = startDiagram;
+        mermaidDiagram.innerHTML = tree;
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                diagramPadding: 15,
+                nodeSpacing: 20
+            }
+        });
+    });
 }
 
 function increaseCounter(n: number): void {
@@ -150,3 +199,5 @@ upload.onclick = () => {
             end childs
     `);
 }
+
+initStartDiagram(nodesTree);
