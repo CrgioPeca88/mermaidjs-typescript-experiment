@@ -58,25 +58,14 @@ let nodesTree: Node[] = [{
     id: 'Nodo_8',
     name: 'Nodo 8',
     type: 'child'
-}/*, {
+}, {
     id: 'Nodo_9',
     name: 'Nodo 9',
     type: 'child',
     roads: [
-        'Nodo_8',
-        'Nodo_3',
-        'Nodo_5',
-        'Nodo_10',
-        'Nodo_2',
-        'Nodo_7',
-        'Nodo_77',
-        'Nodo_88',
-        'Nodo_99',
-        'Nodo_100',
-        'Nodo_200',
-        'Nodo_300'
+        'Nodo_8'
     ]
-}*/];
+}];
 const defaultGraphConfig: GraphConfig = {
     graphDirection: 'TB'
 }
