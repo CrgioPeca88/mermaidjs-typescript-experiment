@@ -6,20 +6,14 @@ interface GraphConfig {
     graphDirection: string;
 }
 
-interface NodeChild {
-    id: string;
-    name: string;
-}
-
 interface Node {
     id: string
     name: string;
     type: NodeType;
-    roads?: NodeChild[]
+    roads?: string[];
 }
 
-type NodeType = 'parent' | 'child'
-type NodesByTypes = [Node[], Node[]];
+type NodeType = 'parent' | 'child';
 
 let mermaidDiagram: HTMLElement = document.getElementById('mermaid-diagram');
 let clear: HTMLElement = document.getElementById('clear');
@@ -31,14 +25,58 @@ let count: number = 1;
 let startDiagram: string;
 let tree: string;
 let nodesTree: Node[] = [{
-    id: '1',
-    name: 'Nodo1',
+    id: 'Nodo_1',
+    name: 'Nodo 1',
+    type: 'parent',
+    roads: [
+        'Nodo_3',
+        'Nodo_8',
+        'Nodo_10',
+        'Nodo_11',
+    ]
+}, {
+    id: 'Nodo_2',
+    name: 'Nodo 2',
     type: 'parent'
 }, {
-    id: '2',
-    name: 'Nodo2',
-    type: 'parent'
-}];
+    id: 'Nodo_10',
+    name: 'Nodo 10',
+    type: 'child',
+    roads: [
+        'Nodo_3',
+        'Nodo_8',
+        'Nodo_10',
+    ]
+}, {
+    id: 'Nodo_11',
+    name: 'Nodo 11',
+    type: 'child',
+    roads: [
+        'Nodo_30'
+    ]
+}, {
+    id: 'Nodo_8',
+    name: 'Nodo 8',
+    type: 'child'
+}/*, {
+    id: 'Nodo_9',
+    name: 'Nodo 9',
+    type: 'child',
+    roads: [
+        'Nodo_8',
+        'Nodo_3',
+        'Nodo_5',
+        'Nodo_10',
+        'Nodo_2',
+        'Nodo_7',
+        'Nodo_77',
+        'Nodo_88',
+        'Nodo_99',
+        'Nodo_100',
+        'Nodo_200',
+        'Nodo_300'
+    ]
+}*/];
 const defaultGraphConfig: GraphConfig = {
     graphDirection: 'TB'
 }
@@ -47,42 +85,60 @@ function getNodesByNodeType(nodesTree: Node[], type: NodeType): Observable<Node[
     return of(nodesTree.filter((node: Node) => node.type === type));
 }
 
-function getTupleParentsWithChilds(parents: Node[], childs: Observable<Node[]>): Observable<NodesByTypes> {
-    return childs.pipe(
-        map((childs: Node[]) => [parents, childs] as NodesByTypes)
-    );
-}
-
 function getGraphHead(config: GraphConfig): Observable<string> {
-    return of(`graph ${config.graphDirection} \n`);
+    return of(`graph ${config.graphDirection}\n`);
 }
 
-function getGraphWithParents(graph: string, parents: Node[]): Observable<string> {
-    const loop: (parentGraph: string, actualNode: Node) => string = (parentGraph: string, actualNode: Node): string => {
-        return (actualNode) ? `${parentGraph}${actualNode.id}((${actualNode.name}))\n`: parentGraph;
+function getNodeGraph(node: Node): string {
+    return `${node.id}((${node.name}))`;
+}
+
+function getSubgraph(content: string, subgraphName: string): Observable<string> {
+    return of(`subgraph ${subgraphName}\n${content}end\n`);
+}
+
+function getGraphByNodeTypeWithoutRoads(nodes: Node[], nodeType: NodeType): Observable<string> {
+    const loop: (graphTmp: string, actualNode: Node) => string = (graphTmp: string, actualNode: Node): string => {
+        if (actualNode && actualNode.type === nodeType) {
+            graphTmp = `${graphTmp}${getNodeGraph(actualNode)}\n`;
+        }
+
+        return graphTmp;
     };
-    return of(`${graph}\n${parents.reduce(loop, '')}`);
+
+    return of(nodes.reduce(loop, ''));
 }
 
-function getGraphFromTuple(tuple: NodesByTypes, config: GraphConfig = defaultGraphConfig): Observable<string> {
-    return of(null).pipe(
-        exhaustMap(() => getGraphHead(config)),
-        exhaustMap((graph: string) => getGraphWithParents(graph, tuple[0])),
-        tap(x => console.log("%c Vamos => ", "background-color: orange; color: white", x)),
-        exhaustMap(a => of(`
-        graph ${config.graphDirection}
-            subgraph vertical[Padres - Initials]
-                1((Nodo 1))
-            end vertical
-        `))
-    )
+function getNodeGraphWithRoads(actualGraph: string, actualNode: Node): string {
+    const loop: (graphTmp: string, actualRoad: string) => string = (graphTmp: string, actualRoad: string): string => {
+        return `${graphTmp}${getNodeGraph(actualNode)}-->${actualRoad}\n`;
+    }
+
+    return (actualNode.roads) ? `${actualGraph}${actualNode.roads.reduce(loop, '')}` : `${actualGraph}${getNodeGraph(actualNode)}\n`;
 }
 
-function getMermaidGraphFromNodesTree(nodesTree: Node[]): Observable<any> {
+function getGraphWithRoads(nodes: Node[]): Observable<string> {
+    const loop: (graphTmp: string, actualNode: Node) => string = (graphTmp: string, actualNode: Node): string => {
+        graphTmp = getNodeGraphWithRoads(graphTmp, actualNode);
+        return graphTmp;
+    };
+
+    return of(nodes.reduce(loop, ''));
+}
+
+function getMermaidGraphFromNodesTree(nodesTree: Node[], config: GraphConfig = defaultGraphConfig): Observable<any> {
     return of(null).pipe(
         exhaustMap(() =>                getNodesByNodeType(nodesTree, 'parent')),
-        exhaustMap((parents: Node[]) => getTupleParentsWithChilds(parents, getNodesByNodeType(nodesTree, 'child'))),
-        exhaustMap((tuple: NodesByTypes) => getGraphFromTuple(tuple))
+        exhaustMap((parents: Node[]) => getGraphByNodeTypeWithoutRoads(parents, 'parent')),
+        exhaustMap((ggbntwr: string) => getSubgraph(ggbntwr, '-')),
+        exhaustMap((subgGgbntwr: string) => getGraphWithRoads(nodesTree).pipe(
+            exhaustMap((ggwr: string) => getSubgraph(ggwr, '.')),
+            map((subgGgwr: string) => `${subgGgbntwr}\n${subgGgwr}`)
+        )),
+        exhaustMap((bodyGraph: string) => getGraphHead(config).pipe(
+            map((headGraph: string) => `${headGraph}${bodyGraph}`)
+        )),
+        tap(x => console.log("%c Vamos => ", "background-color: orange; color: white", x))
     )
 }
 
@@ -95,9 +151,7 @@ function initStartDiagram(nodesTree: Node[]): void {
             startOnLoad: true,
             theme: 'default',
             flowchart: {
-                useMaxWidth: true,
-                diagramPadding: 15,
-                nodeSpacing: 20
+                useMaxWidth: true
             }
         });
     });
@@ -159,6 +213,7 @@ clear.onclick = () => {
 
 treeValidate.onclick = () => {
     console.log(getTree());
+    console.log(nodesTree);
 }
 
 updateParent.onclick = () => {
@@ -176,10 +231,10 @@ upload.onclick = () => {
             end vertical
 
             subgraph childs[Hijos - Transactionals]
-                1-->2((Nodo 2))
+                1((Nodo 1))-->2((Nodo 2))
                 2-->3((Nodo 3))
-                1-->4((Nodo 4))
-                1-->5((Nodo 5))
+                1((Nodo 1))-->4((Nodo 4))
+                1((Nodo 1))-->5((Nodo 5))
                 3-->6((Nodo 6))
                 3-->7((Nodo 7))
                 3-->8((Nodo 8))
