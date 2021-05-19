@@ -16,7 +16,6 @@ interface Node {
 type NodeType = 'parent' | 'child';
 
 let mermaidDiagram: HTMLElement = document.getElementById('mermaid-diagram');
-let clear: HTMLElement = document.getElementById('clear');
 let addNode: HTMLElement = document.getElementById('addNode');
 let treeValidate: HTMLElement = document.getElementById('treeValidate');
 let updateParent: HTMLElement = document.getElementById('updateParent');
@@ -166,17 +165,21 @@ addNode.onclick = () => {
     }
 }
 
-clear.onclick = () => {
-    renderDiagram(getTree());
-}
-
 treeValidate.onclick = () => {
     console.log(getTree());
     console.log(nodesTree);
 }
 
 updateParent.onclick = () => {
-    renderDiagram(getTree());
+    const parentId: string = prompt('Seleccione nodo PADRE:');
+    if(parentId) {
+        of(null).pipe(
+            exhaustMap(() => createParentNode(parentId)),
+            exhaustMap((nodesTree: Node[]) => getMermaidGraphFromNodesTree(nodesTree))
+        ).subscribe((graph: string) => {
+            renderDiagram(graph);
+        });
+    }
 }
 
 upload.onclick = () => {
@@ -212,15 +215,15 @@ upload.onclick = () => {
     `);
 }
 
-function createParentNode(): Observable<Node[]> {
-    const parentId: string = prompt('Seleccione nodo PADRE:');
+function createParentNode(parentId: string): Observable<Node[]> {
     return of(null).pipe(
         exhaustMap(() => createNode(parentId, 'parent')),
-        exhaustMap((newNode: Node) => addNodeToTree(newNode, [...nodesTree])),
+        exhaustMap((newNode: Node) => addNodeToTree(newNode, [])),
         tap((newNodesTree: Node[]) => setNodesTree(newNodesTree))
     );
 }
 
 (function() {
-    createParentNode().subscribe((nodesTree: Node[]) => initStartDiagram(nodesTree));
+    const parentId: string = prompt('Seleccione nodo PADRE:');
+    createParentNode(parentId).subscribe((nodesTree: Node[]) => initStartDiagram(nodesTree));
 })();
