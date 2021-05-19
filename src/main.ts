@@ -21,53 +21,14 @@ let addNode: HTMLElement = document.getElementById('addNode');
 let treeValidate: HTMLElement = document.getElementById('treeValidate');
 let updateParent: HTMLElement = document.getElementById('updateParent');
 let upload: HTMLElement = document.getElementById('upload');
-let count: number = 1;
-let startDiagram: string;
 let tree: string;
-let nodesTree: Node[] = [{
-    id: 'Nodo_1',
-    name: 'Nodo 1',
-    type: 'parent',
-    roads: [
-        'Nodo_3',
-        'Nodo_8',
-        'Nodo_10',
-        'Nodo_11',
-    ]
-}, {
-    id: 'Nodo_2',
-    name: 'Nodo 2',
-    type: 'parent'
-}, {
-    id: 'Nodo_10',
-    name: 'Nodo 10',
-    type: 'child',
-    roads: [
-        'Nodo_3',
-        'Nodo_8',
-        'Nodo_10',
-    ]
-}, {
-    id: 'Nodo_11',
-    name: 'Nodo 11',
-    type: 'child',
-    roads: [
-        'Nodo_30'
-    ]
-}, {
-    id: 'Nodo_8',
-    name: 'Nodo 8',
-    type: 'child'
-}, {
-    id: 'Nodo_9',
-    name: 'Nodo 9',
-    type: 'child',
-    roads: [
-        'Nodo_8'
-    ]
-}];
+let nodesTree: Node[] = [];
 const defaultGraphConfig: GraphConfig = {
     graphDirection: 'TB'
+}
+
+function setNodesTree(newNodesTree: Node[]): void {
+    nodesTree = newNodesTree;
 }
 
 function getNodesByNodeType(nodesTree: Node[], type: NodeType): Observable<Node[]> {
@@ -115,15 +76,23 @@ function getGraphWithRoads(nodes: Node[]): Observable<string> {
     return of(nodes.reduce(loop, ''));
 }
 
-function getMermaidGraphFromNodesTree(nodesTree: Node[], config: GraphConfig = defaultGraphConfig): Observable<any> {
+function buildFinalGraph(subgGgbntwr: string, nodesTree: Node[]): Observable<string> {
+    if (nodesTree.length > 1) {
+        return getGraphWithRoads(nodesTree).pipe(
+            exhaustMap((ggwr: string) => getSubgraph(ggwr, '.')),
+            map((subgGgwr: string) => `${subgGgbntwr}\n${subgGgwr}`)
+        );
+    } else {
+        return of(`${subgGgbntwr}`);
+    }
+}
+
+function getMermaidGraphFromNodesTree(nodesTree: Node[], config: GraphConfig = defaultGraphConfig): Observable<string> {
     return of(null).pipe(
         exhaustMap(() =>                getNodesByNodeType(nodesTree, 'parent')),
         exhaustMap((parents: Node[]) => getGraphByNodeTypeWithoutRoads(parents, 'parent')),
         exhaustMap((ggbntwr: string) => getSubgraph(ggbntwr, '-')),
-        exhaustMap((subgGgbntwr: string) => getGraphWithRoads(nodesTree).pipe(
-            exhaustMap((ggwr: string) => getSubgraph(ggwr, '.')),
-            map((subgGgwr: string) => `${subgGgbntwr}\n${subgGgwr}`)
-        )),
+        exhaustMap((subgGgbntwr: string) => buildFinalGraph(subgGgbntwr, nodesTree)),
         exhaustMap((bodyGraph: string) => getGraphHead(config).pipe(
             map((headGraph: string) => `${headGraph}${bodyGraph}`)
         )),
@@ -132,9 +101,9 @@ function getMermaidGraphFromNodesTree(nodesTree: Node[], config: GraphConfig = d
 }
 
 function initStartDiagram(nodesTree: Node[]): void {
+    console.log("8888", nodesTree);
     getMermaidGraphFromNodesTree(nodesTree).subscribe((res: string) => {
-        startDiagram = res;
-        tree = startDiagram;
+        tree = res;
         mermaidDiagram.innerHTML = tree;
         mermaid.initialize({
             startOnLoad: true,
@@ -146,57 +115,58 @@ function initStartDiagram(nodesTree: Node[]): void {
     });
 }
 
-function increaseCounter(n: number): void {
-    count = count + n;
-}
-
-function clearCounter(n: number): void {
-    count = n;
-}
-
-function getCounter(): number {
-    return count;
-}
-
-function getTree(): string {
-    return tree;
-}
-
-function clearTree(): void {
-    tree = startDiagram;
-}
-
-function AddNodeToTree(newNode: String): void {
-    if (getCounter() > 2) {
-        tree = tree.replace(`end childs`, `${newNode}\n end childs`);
-    } else {
-        tree =`
-            ${tree}\n
-            subgraph childs[Hijos - Transactionals]
-            ${newNode}
-            end childs
-        `;
-    }
-}
-
 function renderDiagram(diagram: string): void {
     mermaid.render("mermaid-diagram-svg", diagram, (svgCode) => {
         mermaidDiagram.innerHTML = svgCode;
     });
 }
 
+function getTree(): string {
+    return tree;
+}
+
+function createNode(nodeId: string, nodeType: NodeType = 'child'): Observable<Node> {
+   const name: string = nodeId.replace('_', ' ');
+    return of({
+    id: nodeId,
+    name: name,
+    type: nodeType,
+    });
+}
+
+function addNodeToTree(node: Node, nodesTree: Node[]): Observable<Node[]> {
+    if (nodesTree.filter((n: Node) => n.id === node.id).length === 0) {
+        nodesTree.push(node);
+    }
+    return of(nodesTree);
+}
+
+function updateParentRoads(parentId: string, nodeId: string, newNodesTree: Node[]): Observable<Node[]> {
+    return of(newNodesTree.map((node: Node) => {
+        if(node.id === parentId) {
+            node.roads = (node.roads) ? [...node.roads, nodeId] : [nodeId];
+        }
+        return node;
+    }));
+}
+
 addNode.onclick = () => {
-    const from = prompt('Seleccione nodo PADRE:')
-    if (from) {
-        increaseCounter(1)
-        AddNodeToTree(`${from}-->${count}((Nodo ${count}))`);
-        renderDiagram(getTree());
+    const parentId = prompt('Digite nodo PADRE:');
+    const nodeId = prompt('Digite el ID del nodo:');
+    if (parentId && nodeId) {
+        of(null).pipe(
+            exhaustMap(() => createNode(nodeId)),
+            exhaustMap((newNode: Node) => addNodeToTree(newNode, [...nodesTree])),
+            exhaustMap((newNodesTree: Node[]) => updateParentRoads(parentId, nodeId, newNodesTree)),
+            tap((newNodesTree: Node[]) => setNodesTree(newNodesTree)),
+            exhaustMap((newNodesTree: Node[]) => getMermaidGraphFromNodesTree(newNodesTree))
+        ).subscribe((graph: string) => {
+            renderDiagram(graph);
+        });
     }
 }
 
 clear.onclick = () => {
-    clearTree();
-    clearCounter(1);
     renderDiagram(getTree());
 }
 
@@ -206,8 +176,6 @@ treeValidate.onclick = () => {
 }
 
 updateParent.onclick = () => {
-    clearTree();
-    clearCounter(1);
     renderDiagram(getTree());
 }
 
@@ -244,4 +212,15 @@ upload.onclick = () => {
     `);
 }
 
-initStartDiagram(nodesTree);
+function createParentNode(): Observable<Node[]> {
+    const parentId: string = prompt('Seleccione nodo PADRE:');
+    return of(null).pipe(
+        exhaustMap(() => createNode(parentId, 'parent')),
+        exhaustMap((newNode: Node) => addNodeToTree(newNode, [...nodesTree])),
+        tap((newNodesTree: Node[]) => setNodesTree(newNodesTree))
+    );
+}
+
+(function() {
+    createParentNode().subscribe((nodesTree: Node[]) => initStartDiagram(nodesTree));
+})();
