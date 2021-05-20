@@ -17,6 +17,7 @@ type NodeType = 'parent' | 'child';
 
 let mermaidDiagram: HTMLElement = document.getElementById('mermaid-diagram');
 let addNode: HTMLElement = document.getElementById('addNode');
+let editNode: HTMLElement = document.getElementById('editNode');
 let treeValidate: HTMLElement = document.getElementById('treeValidate');
 let updateParent: HTMLElement = document.getElementById('updateParent');
 let upload: HTMLElement = document.getElementById('upload');
@@ -159,6 +160,45 @@ addNode.onclick = () => {
             exhaustMap((newNodesTree: Node[]) => updateParentRoads(parentId, nodeId, newNodesTree)),
             tap((newNodesTree: Node[]) => setNodesTree(newNodesTree)),
             exhaustMap((newNodesTree: Node[]) => getMermaidGraphFromNodesTree(newNodesTree))
+        ).subscribe((graph: string) => {
+            renderDiagram(graph);
+        });
+    }
+}
+
+function removeNodeFromTree(actualNodeId: string, nodesTree: Node[]): Observable<Node[]> {
+    return of(nodesTree.filter((node: Node) => node.id !== actualNodeId));
+}
+
+function getNodeFromTree(actualNodeId: string, nodesTree: Node[]): Observable<Node> {
+    return of(nodesTree.find((node: Node) => node.id === actualNodeId));
+}
+
+function updateRoadsAfterUpdate(newNodesTree: Node[], newNodeId: string, actualNodeId: string): Observable<Node[]> {
+    return of(newNodesTree.map((node: Node) => {
+        if(node.roads && node.roads.includes(actualNodeId)) {
+            const roadsWithoutActual: string[] = node.roads.filter(road => road !== actualNodeId);
+            node.roads = [...roadsWithoutActual, newNodeId];
+        }
+
+        return node;
+    }));
+}
+
+editNode.onclick = () => {
+    const actualNodeId: string = prompt('Digite el ID del nodo a editar:');
+    const newNodeId: string = prompt('Digite el ID del nuevo nodo:');
+    if (actualNodeId && newNodeId) {
+        of(null).pipe(
+            exhaustMap(() => getNodeFromTree(actualNodeId, nodesTree)),
+            exhaustMap((oldNode: Node) => removeNodeFromTree(actualNodeId, nodesTree).pipe(
+                map((nodesTree: Node[]) => [...nodesTree, {...oldNode, id: newNodeId, name: newNodeId}])
+            )),
+            exhaustMap((newNodesTree: Node[]) => updateRoadsAfterUpdate(newNodesTree, newNodeId, actualNodeId)),
+            tap((nodesTreeUpdated: Node[]) => {
+                setNodesTree(nodesTreeUpdated)
+            }),
+            exhaustMap((nodesTreeUpdated: Node[]) => getMermaidGraphFromNodesTree(nodesTreeUpdated))
         ).subscribe((graph: string) => {
             renderDiagram(graph);
         });
