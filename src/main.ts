@@ -101,7 +101,6 @@ function getMermaidGraphFromNodesTree(nodesTree: Node[], config: GraphConfig = d
 }
 
 function initStartDiagram(nodesTree: Node[]): void {
-    console.log("8888", nodesTree);
     getMermaidGraphFromNodesTree(nodesTree).subscribe((res: string) => {
         tree = res;
         mermaidDiagram.innerHTML = tree;
