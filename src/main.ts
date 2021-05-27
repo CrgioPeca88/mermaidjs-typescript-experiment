@@ -188,6 +188,216 @@ function updateRoadsAfterUpdate(newNodesTree: Node[], newNodeId: string, actualN
     }));
 }
 
+interface Element {
+  id: number;
+  key: string;
+  roads: string[]
+}
+
+const maxDefaultValue = 800;
+const rankSpacingValue = {
+  '0': 50,
+  '1': 50,
+  '2': 100,
+  '3': 400,
+  '4': 600,
+  '5': 600
+}
+
+function getRankSpacing(): number {
+  const elementList: Element[]= [{
+		"id": 29,
+		"key": "vertical_restaurant",
+		"roads": [
+			"ticket_type_pi",
+			"ticket_type_tpd",
+			"ticket_type_pme"
+		]
+	},
+	{
+		"id": 28,
+		"key": "ticket_type_pi",
+		"roads": [
+			"product_type_product",
+			"product_type_topping_with_price",
+			"product_type_priceless_topping",
+			"product_type_synthetic_main_topping",
+			"product_type_synthetic_secondary_topping",
+			"product_type_synthetic_beverage_topping",
+			"product_type_synthetic_addition_topping",
+			"product_type_napkin_topping"
+		],
+	},
+	{
+		"id": 21,
+		"key": "product_type_product",
+		"roads": [
+			"first_iteration",
+			"second_iteration",
+			"third_iteration"
+		],
+	},
+	{
+		"id": 14,
+		"key": "first_iteration",
+	},
+	{
+		"id": 13,
+		"key": "second_iteration",
+	},
+	{
+		"id": 12,
+		"key": "third_iteration",
+	},
+	{
+		"id": 20,
+		"key": "product_type_topping_with_price",
+		"roads": [
+			"first_iteration",
+			"second_iteration",
+			"third_iteration"
+		],
+	},
+	{
+		"id": 19,
+		"key": "product_type_priceless_topping",
+		"roads": [
+			"first_iteration",
+			"second_iteration",
+			"third_iteration"
+		],
+	},
+	{
+		"id": 18,
+		"key": "product_type_synthetic_main_topping",
+		"roads": [
+			"first_iteration",
+			"second_iteration",
+			"third_iteration"
+		],
+	},
+	{
+		"id": 17,
+		"key": "product_type_synthetic_secondary_topping",
+		"roads": [
+			"first_iteration",
+			"second_iteration",
+			"third_iteration"
+		],
+	},
+	{
+		"id": 16,
+		"key": "product_type_synthetic_beverage_topping",
+		"roads": [
+			"first_iteration",
+			"second_iteration",
+			"third_iteration"
+		],
+	},
+	{
+		"id": 15,
+		"key": "product_type_synthetic_addition_topping",
+		"roads": [
+			"first_iteration",
+			"second_iteration",
+			"third_iteration"
+		],
+	},
+	{
+		"id": 51,
+		"key": "product_type_napkin_topping",
+		"roads": [
+			"first_iteration",
+			"second_iteration",
+			"third_iteration"
+		],
+	},
+	{
+		"id": 27,
+		"key": "ticket_type_tpd",
+		"roads": [
+			"product_type_product",
+			"product_type_topping_with_price",
+			"product_type_priceless_topping",
+			"product_type_synthetic_main_topping",
+			"product_type_synthetic_secondary_topping",
+			"product_type_synthetic_beverage_topping",
+			"product_type_synthetic_addition_topping"
+		],
+	},
+	{
+		"id": 26,
+		"key": "ticket_type_pme",
+		"roads": [
+			"product_temperature",
+			"broke_spilled",
+			"bad_packaged",
+			"product_quality"
+		],
+	},
+	{
+		"id": 25,
+		"key": "product_temperature",
+		"roads": [
+			"product_type_product",
+			"product_type_topping_with_price",
+			"product_type_priceless_topping",
+			"product_type_synthetic_main_topping",
+			"product_type_synthetic_secondary_topping",
+			"product_type_synthetic_beverage_topping",
+			"product_type_synthetic_addition_topping"
+		],
+	},
+	{
+		"id": 24,
+		"key": "broke_spilled",
+		"roads": [
+			"product_type_product",
+			"product_type_topping_with_price",
+			"product_type_priceless_topping",
+			"product_type_synthetic_main_topping",
+			"product_type_synthetic_secondary_topping",
+			"product_type_synthetic_beverage_topping",
+			"product_type_synthetic_addition_topping"
+		],
+	},
+	{
+		"id": 23,
+		"key": "bad_packaged",
+		"roads": [
+			"product_type_product",
+			"product_type_topping_with_price",
+			"product_type_priceless_topping",
+			"product_type_synthetic_main_topping",
+			"product_type_synthetic_secondary_topping",
+			"product_type_synthetic_beverage_topping",
+			"product_type_synthetic_addition_topping"
+		],
+	},
+	{
+		"id": 22,
+		"key": "product_quality",
+		"roads": [
+			"product_type_product",
+			"product_type_topping_with_price",
+			"product_type_priceless_topping",
+			"product_type_synthetic_main_topping",
+			"product_type_synthetic_secondary_topping",
+			"product_type_synthetic_beverage_topping",
+			"product_type_synthetic_addition_topping"
+		],
+	}
+];
+
+  const loop = (nodesCount: number, ele: Element): number => {
+    nodesCount = ele?.roads?.length >= 6 ? nodesCount + 1 : nodesCount
+    return nodesCount;
+  };
+
+  const countNodesWithNlines: number = elementList.reduce(loop, 0);
+  return rankSpacingValue[countNodesWithNlines.toString()] || maxDefaultValue;
+}
+
 editNode.onclick = () => {
     const actualNodeId: string = prompt('Digite el ID del nodo a editar:');
     const newNodeId: string = prompt('Digite el ID del nuevo nodo:');
@@ -232,9 +442,41 @@ diagramPadding: 20,
 */
 upload.onclick = () => {
   const a = `TICKET_TYPE_PI`;
+  const rankSpacing = getRankSpacing();
+  /*const b = `
+%%{ initialize: { "theme": 'forest', "flowchart": { "useMaxWidth": true, "diagramPadding": 20, "curve": 'basis' } } }%%
+graph TB
+vertical_restaurant((RESTAURANTE))
+
+vertical_restaurant-->N1
+vertical_restaurant-->N2
+vertical_restaurant-->N3
+N1-->N11((N11))
+N1-->N12((N12))
+N1-->N13((N13))
+N1-->N14((N14))
+N1-->N15((N15))
+N1-->N16((N16))
+N1-->N17((N17))
+N11-->
+N2-->N21((N21))
+N2-->N22((N22))
+N2-->N23((N23))
+N2-->N24((N24))
+N2-->N25((N25))
+N2-->N26((N26))
+N2-->N27((N27))
+N11-->N111((N111))
+N111-->N112((N112))
+N112-->N113((N113))
+N113-->N114((N114))
+N114-->N115((N115))
+N115-->N116((N116))
+N116-->N117((N117))
+`*/
 
   const b = `
-%%{ initialize: { "theme": 'forest', "flowchart": { "useMaxWidth": true, "diagramPadding": 20, "curve": 'basis', "rankSpacing": 1500 } } }%%
+%%{ initialize: { "theme": 'forest', "flowchart": { "useMaxWidth": true, "diagramPadding": 20, "curve": 'basis', "rankSpacing": ${rankSpacing}, "nodeSpacing": 100 } } }%%
 graph TB
 vertical_restaurant((RESTAURANTE))
 style vertical_restaurant fill:transparent,stroke:#6816fc,stroke-width:4px,color:#6816fc,margin:10px
@@ -316,7 +558,7 @@ product_quality([product_quality]):::transactional-->product_type_synthetic_seco
 product_quality([product_quality]):::transactional-->product_type_synthetic_beverage_topping
 product_quality([product_quality]):::transactional-->product_type_synthetic_addition_topping
 classDef transactional fill:transparent,stroke:#ff441f,stroke-width:4px,color:#ff441f
-`
+`;
 console.log("bbbbb", b);
     renderDiagram(/*`
           %%{ initialize: { "theme": 'forest', "flowchart": { "useMaxWidth": true, "diagramPadding": 20, "curve": 'basis', "rankSpacing": 200, "nodeSpacing": 80 } } }%%
