@@ -96,3 +96,9 @@ body h1 {
     overflow-y: auto;
     overflow-x: auto;
 }
+
+.node .initial:hover {
+  fill: #f9f !important;
+  stroke: #333 !important;
+  stroke-width: 4px !important;
+}

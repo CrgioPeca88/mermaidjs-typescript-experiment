@@ -16,6 +16,7 @@ interface Node {
 type NodeType = 'parent' | 'child';
 
 let mermaidDiagram: HTMLElement = document.getElementById('mermaid-diagram');
+let mermaidDiagram2: HTMLElement = document.getElementById('mermaid-diagram2');
 let addNode: HTMLElement = document.getElementById('addNode');
 let editNode: HTMLElement = document.getElementById('editNode');
 let treeValidate: HTMLElement = document.getElementById('treeValidate');
@@ -103,13 +104,16 @@ function getMermaidGraphFromNodesTree(nodesTree: Node[], config: GraphConfig = d
 function initStartDiagram(nodesTree: Node[]): void {
     getMermaidGraphFromNodesTree(nodesTree).subscribe((res: string) => {
         tree = res;
-        mermaidDiagram.innerHTML = tree;
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'default',
-            flowchart: {
-                useMaxWidth: true
-            }
+        const testD = `
+          graph LR
+            n1([Nodo 1])===>n2([Nodo 2])
+        `
+        mermaid.render("mermaid-diagram-svg", tree, (svgCode) => {
+            mermaidDiagram.innerHTML = svgCode;
+        });
+
+        mermaid.render("mermaid-diagram-svg2", testD, (svgCode) => {
+            mermaidDiagram2.innerHTML = svgCode;
         });
     });
 }
@@ -220,38 +224,112 @@ updateParent.onclick = () => {
         });
     }
 }
-
+/*
+diagramPadding: 20,
+                            : '',
+                            rankSpacing: 900,
+                            nodeSpacing: 80
+*/
 upload.onclick = () => {
-    renderDiagram(`
-    %%{ initialize: { "theme": 'forest', "flowchart": { "useMaxWidth": false } } }%%
-        graph TB
-            subgraph vertical[Padres - Initials]
-                1((Nodo 1))
-            end vertical
+  const a = `TICKET_TYPE_PI`;
 
-            subgraph childs[Hijos - Transactionals]
-                1((Nodo 1))-->2((Nodo 2))
-                2-->3((Nodo 3))
-                1((Nodo 1))-->4((Nodo 4))
-                1((Nodo 1))-->5((Nodo 5))
-                3-->6((Nodo 6))
-                3-->7((Nodo 7))
-                3-->8((Nodo 8))
-                3-->9((Nodo 9))
-                3-->10((Nodo 10))
-                3-->11((Nodo 11))
-                3-->12((Nodo 12))
-                7-->13((Nodo 13))
-                3-->14((Nodo 14))
-                3-->15((Nodo 15))
-                3-->16((Nodo 16))
-                3-->17((Nodo 17))
-                3-->18((Nodo 18))
-                3-->19((Nodo 19))
-                3-->20((Nodo 20))
-                3-->21((Nodo 21))
-            end childs
-    `);
+  const b = `
+%%{ initialize: { "theme": 'forest', "flowchart": { "useMaxWidth": true, "diagramPadding": 20, "curve": 'basis', "rankSpacing": 1500 } } }%%
+graph TB
+vertical_restaurant((RESTAURANTE))
+style vertical_restaurant fill:transparent,stroke:#6816fc,stroke-width:4px,color:#6816fc,margin:10px
+vertical_restaurant-->ticket_type_pi
+vertical_restaurant-->ticket_type_tpd
+vertical_restaurant-->ticket_type_pme
+ticket_type_pi((${a})):::transactional-->product_type_product
+ticket_type_pi:::transactional-->product_type_topping_with_price
+ticket_type_pi:::transactional-->product_type_priceless_topping
+ticket_type_pi:::transactional-->product_type_synthetic_main_topping
+ticket_type_pi:::transactional-->product_type_synthetic_secondary_topping
+ticket_type_pi:::transactional-->product_type_synthetic_beverage_topping
+ticket_type_pi:::transactional-->product_type_synthetic_addition_topping
+ticket_type_pi:::transactional-->product_type_napkin_topping
+product_type_product([product_type_product]):::transactional-->first_iteration
+product_type_product([product_type_product]):::transactional-->second_iteration
+product_type_product([product_type_product]):::transactional-->third_iteration
+first_iteration([first_iteration]):::transactional
+second_iteration([second_iteration]):::transactional
+third_iteration([third_iteration]):::transactional
+product_type_topping_with_price([product_type_topping_with_price]):::transactional-->first_iteration
+product_type_topping_with_price([product_type_topping_with_price]):::transactional-->second_iteration
+product_type_topping_with_price([product_type_topping_with_price]):::transactional-->third_iteration
+product_type_priceless_topping([product_type_priceless_topping]):::transactional-->first_iteration
+product_type_priceless_topping([product_type_priceless_topping]):::transactional-->second_iteration
+product_type_priceless_topping([product_type_priceless_topping]):::transactional-->third_iteration
+product_type_synthetic_main_topping([product_type_synthetic_main_topping]):::transactional-->first_iteration
+product_type_synthetic_main_topping([product_type_synthetic_main_topping]):::transactional-->second_iteration
+product_type_synthetic_main_topping([product_type_synthetic_main_topping]):::transactional-->third_iteration
+product_type_synthetic_secondary_topping([product_type_synthetic_secondary_topping]):::transactional-->first_iteration
+product_type_synthetic_secondary_topping([product_type_synthetic_secondary_topping]):::transactional-->second_iteration
+product_type_synthetic_secondary_topping([product_type_synthetic_secondary_topping]):::transactional-->third_iteration
+product_type_synthetic_beverage_topping([product_type_synthetic_beverage_topping]):::transactional-->first_iteration
+product_type_synthetic_beverage_topping([product_type_synthetic_beverage_topping]):::transactional-->second_iteration
+product_type_synthetic_beverage_topping([product_type_synthetic_beverage_topping]):::transactional-->third_iteration
+product_type_synthetic_addition_topping([product_type_synthetic_addition_topping]):::transactional-->first_iteration
+product_type_synthetic_addition_topping([product_type_synthetic_addition_topping]):::transactional-->second_iteration
+product_type_synthetic_addition_topping([product_type_synthetic_addition_topping]):::transactional-->third_iteration
+product_type_napkin_topping([product_type_napkin_topping]):::transactional-->first_iteration
+product_type_napkin_topping([product_type_napkin_topping]):::transactional-->second_iteration
+product_type_napkin_topping([product_type_napkin_topping]):::transactional-->third_iteration
+ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_product
+ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_topping_with_price
+ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_priceless_topping
+ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_synthetic_main_topping
+ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_synthetic_secondary_topping
+ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_synthetic_beverage_topping
+ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_synthetic_addition_topping
+ticket_type_pme([ticket_type_pme]):::transactional-->product_temperature
+ticket_type_pme([ticket_type_pme]):::transactional-->broke_spilled
+ticket_type_pme([ticket_type_pme]):::transactional-->bad_packaged
+ticket_type_pme([ticket_type_pme]):::transactional-->product_quality
+product_temperature([product_temperature]):::transactional-->product_type_product
+product_temperature([product_temperature]):::transactional-->product_type_topping_with_price
+product_temperature([product_temperature]):::transactional-->product_type_priceless_topping
+product_temperature([product_temperature]):::transactional-->product_type_synthetic_main_topping
+product_temperature([product_temperature]):::transactional-->product_type_synthetic_secondary_topping
+product_temperature([product_temperature]):::transactional-->product_type_synthetic_beverage_topping
+product_temperature([product_temperature]):::transactional-->product_type_synthetic_addition_topping
+broke_spilled([broke_spilled]):::transactional-->product_type_product
+broke_spilled([broke_spilled]):::transactional-->product_type_topping_with_price
+broke_spilled([broke_spilled]):::transactional-->product_type_priceless_topping
+broke_spilled([broke_spilled]):::transactional-->product_type_synthetic_main_topping
+broke_spilled([broke_spilled]):::transactional-->product_type_synthetic_secondary_topping
+broke_spilled([broke_spilled]):::transactional-->product_type_synthetic_beverage_topping
+broke_spilled([broke_spilled]):::transactional-->product_type_synthetic_addition_topping
+bad_packaged([bad_packaged]):::transactional-->product_type_product
+bad_packaged([bad_packaged]):::transactional-->product_type_topping_with_price
+bad_packaged([bad_packaged]):::transactional-->product_type_priceless_topping
+bad_packaged([bad_packaged]):::transactional-->product_type_synthetic_main_topping
+bad_packaged([bad_packaged]):::transactional-->product_type_synthetic_secondary_topping
+bad_packaged([bad_packaged]):::transactional-->product_type_synthetic_beverage_topping
+bad_packaged([bad_packaged]):::transactional-->product_type_synthetic_addition_topping
+product_quality([product_quality]):::transactional-->product_type_product
+product_quality([product_quality]):::transactional-->product_type_topping_with_price
+product_quality([product_quality]):::transactional-->product_type_priceless_topping
+product_quality([product_quality]):::transactional-->product_type_synthetic_main_topping
+product_quality([product_quality]):::transactional-->product_type_synthetic_secondary_topping
+product_quality([product_quality]):::transactional-->product_type_synthetic_beverage_topping
+product_quality([product_quality]):::transactional-->product_type_synthetic_addition_topping
+classDef transactional fill:transparent,stroke:#ff441f,stroke-width:4px,color:#ff441f
+`
+console.log("bbbbb", b);
+    renderDiagram(/*`
+          %%{ initialize: { "theme": 'forest', "flowchart": { "useMaxWidth": true, "diagramPadding": 20, "curve": 'basis', "rankSpacing": 200, "nodeSpacing": 80 } } }%%
+          graph TB
+            vertical_restaurant([restaurant])
+
+            vertical_restaurant([restaurant])-->ticket_type_pi
+            vertical_restaurant([restaurant])-->ticket_type_tpd
+            vertical_restaurant([restaurant])-->ticket_type_pme
+            ticket_type_pi([pi])-->product_type_product
+            ticket_type_pi([pi])-->product_type_topping_with_price
+
+      `*/b);
 }
 
 function createParentNode(parentId: string): Observable<Node[]> {
@@ -263,6 +341,13 @@ function createParentNode(parentId: string): Observable<Node[]> {
 }
 
 (function() {
+    mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        flowchart: {
+            useMaxWidth: true
+        }
+    });
     const parentId: string = prompt('Seleccione nodo PADRE:');
     createParentNode(parentId).subscribe((nodesTree: Node[]) => initStartDiagram(nodesTree));
 })();
