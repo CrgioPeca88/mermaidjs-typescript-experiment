@@ -197,8 +197,8 @@ interface Element {
 const maxDefaultValue = 800;
 const rankSpacingValue = {
   '0': 50,
-  '1': 50,
-  '2': 100,
+  '1': 100,
+  '2': 400,
   '3': 400,
   '4': 600,
   '5': 600
@@ -310,81 +310,6 @@ function getRankSpacing(): number {
 			"first_iteration",
 			"second_iteration",
 			"third_iteration"
-		],
-	},
-	{
-		"id": 27,
-		"key": "ticket_type_tpd",
-		"roads": [
-			"product_type_product",
-			"product_type_topping_with_price",
-			"product_type_priceless_topping",
-			"product_type_synthetic_main_topping",
-			"product_type_synthetic_secondary_topping",
-			"product_type_synthetic_beverage_topping",
-			"product_type_synthetic_addition_topping"
-		],
-	},
-	{
-		"id": 26,
-		"key": "ticket_type_pme",
-		"roads": [
-			"product_temperature",
-			"broke_spilled",
-			"bad_packaged",
-			"product_quality"
-		],
-	},
-	{
-		"id": 25,
-		"key": "product_temperature",
-		"roads": [
-			"product_type_product",
-			"product_type_topping_with_price",
-			"product_type_priceless_topping",
-			"product_type_synthetic_main_topping",
-			"product_type_synthetic_secondary_topping",
-			"product_type_synthetic_beverage_topping",
-			"product_type_synthetic_addition_topping"
-		],
-	},
-	{
-		"id": 24,
-		"key": "broke_spilled",
-		"roads": [
-			"product_type_product",
-			"product_type_topping_with_price",
-			"product_type_priceless_topping",
-			"product_type_synthetic_main_topping",
-			"product_type_synthetic_secondary_topping",
-			"product_type_synthetic_beverage_topping",
-			"product_type_synthetic_addition_topping"
-		],
-	},
-	{
-		"id": 23,
-		"key": "bad_packaged",
-		"roads": [
-			"product_type_product",
-			"product_type_topping_with_price",
-			"product_type_priceless_topping",
-			"product_type_synthetic_main_topping",
-			"product_type_synthetic_secondary_topping",
-			"product_type_synthetic_beverage_topping",
-			"product_type_synthetic_addition_topping"
-		],
-	},
-	{
-		"id": 22,
-		"key": "product_quality",
-		"roads": [
-			"product_type_product",
-			"product_type_topping_with_price",
-			"product_type_priceless_topping",
-			"product_type_synthetic_main_topping",
-			"product_type_synthetic_secondary_topping",
-			"product_type_synthetic_beverage_topping",
-			"product_type_synthetic_addition_topping"
 		],
 	}
 ];
@@ -518,45 +443,6 @@ product_type_synthetic_addition_topping([product_type_synthetic_addition_topping
 product_type_napkin_topping([product_type_napkin_topping]):::transactional-->first_iteration
 product_type_napkin_topping([product_type_napkin_topping]):::transactional-->second_iteration
 product_type_napkin_topping([product_type_napkin_topping]):::transactional-->third_iteration
-ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_product
-ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_topping_with_price
-ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_priceless_topping
-ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_synthetic_main_topping
-ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_synthetic_secondary_topping
-ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_synthetic_beverage_topping
-ticket_type_tpd([ticket_type_tpd]):::transactional-->product_type_synthetic_addition_topping
-ticket_type_pme([ticket_type_pme]):::transactional-->product_temperature
-ticket_type_pme([ticket_type_pme]):::transactional-->broke_spilled
-ticket_type_pme([ticket_type_pme]):::transactional-->bad_packaged
-ticket_type_pme([ticket_type_pme]):::transactional-->product_quality
-product_temperature([product_temperature]):::transactional-->product_type_product
-product_temperature([product_temperature]):::transactional-->product_type_topping_with_price
-product_temperature([product_temperature]):::transactional-->product_type_priceless_topping
-product_temperature([product_temperature]):::transactional-->product_type_synthetic_main_topping
-product_temperature([product_temperature]):::transactional-->product_type_synthetic_secondary_topping
-product_temperature([product_temperature]):::transactional-->product_type_synthetic_beverage_topping
-product_temperature([product_temperature]):::transactional-->product_type_synthetic_addition_topping
-broke_spilled([broke_spilled]):::transactional-->product_type_product
-broke_spilled([broke_spilled]):::transactional-->product_type_topping_with_price
-broke_spilled([broke_spilled]):::transactional-->product_type_priceless_topping
-broke_spilled([broke_spilled]):::transactional-->product_type_synthetic_main_topping
-broke_spilled([broke_spilled]):::transactional-->product_type_synthetic_secondary_topping
-broke_spilled([broke_spilled]):::transactional-->product_type_synthetic_beverage_topping
-broke_spilled([broke_spilled]):::transactional-->product_type_synthetic_addition_topping
-bad_packaged([bad_packaged]):::transactional-->product_type_product
-bad_packaged([bad_packaged]):::transactional-->product_type_topping_with_price
-bad_packaged([bad_packaged]):::transactional-->product_type_priceless_topping
-bad_packaged([bad_packaged]):::transactional-->product_type_synthetic_main_topping
-bad_packaged([bad_packaged]):::transactional-->product_type_synthetic_secondary_topping
-bad_packaged([bad_packaged]):::transactional-->product_type_synthetic_beverage_topping
-bad_packaged([bad_packaged]):::transactional-->product_type_synthetic_addition_topping
-product_quality([product_quality]):::transactional-->product_type_product
-product_quality([product_quality]):::transactional-->product_type_topping_with_price
-product_quality([product_quality]):::transactional-->product_type_priceless_topping
-product_quality([product_quality]):::transactional-->product_type_synthetic_main_topping
-product_quality([product_quality]):::transactional-->product_type_synthetic_secondary_topping
-product_quality([product_quality]):::transactional-->product_type_synthetic_beverage_topping
-product_quality([product_quality]):::transactional-->product_type_synthetic_addition_topping
 classDef transactional fill:transparent,stroke:#ff441f,stroke-width:4px,color:#ff441f
 `;
 console.log("bbbbb", b);
